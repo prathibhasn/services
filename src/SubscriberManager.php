@@ -7,13 +7,13 @@ use PDO;
 class SubscriberManager {
 
     protected $pdo;
-    protected $config;
-    public function __construct($config) {
-      $this->config = $config;
-      $this->pdo = new PDO($this->config['dsn']);
+    protected $mailer;
+    public function __construct($pdo, $mailer) {
+      $this->pdo = $pdo;
+      $this->mailer = $mailer;
     }
 
-    public function notifySubscribers($mailer){
+    public function notifySubscribers(){
         $query = 'SELECT * FROM subscribers';
         $subscribers = $this->pdo->query($query);
 
@@ -28,7 +28,7 @@ Hello %s! A new article has been published in the domain you have subscribed for
 You can visit the link below to read the article below. To unsubscribe, browse to our website, login & click on unsubscribe button!.
 EOF
 ,$subscriber['name']);
-        $mailer->sendMail($sender, $subscriber['email'], $subject, $message);
+        $this->mailer->sendMail($sender, $subscriber['email'], $subject, $message);
         }
     }
 }
